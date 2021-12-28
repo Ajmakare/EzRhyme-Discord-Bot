@@ -29,17 +29,37 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         break;
 
       case "testAPI":
-        fetch("https://api.datamuse.com/words?sp=hipopatamus")
+        //Generate random word variable for rhyming API and sendMessage
+        fetch("https://random-words-api.vercel.app/word")
           .then((res) => res.json())
           .then((json) => {
-            //View in console (pure JSON)
-            let someJson = JSON.stringify(json);
+            let someJson = JSON.stringify(json)
+              .split(":")[1]
+              .split(",")[0]
+              .replace(/["]+/g, "");
             console.log(someJson);
             bot.sendMessage({
               to: channelID,
-              message: someJson,
+              message: `What rhymes with the word: ${someJson}`,
             });
+            //Uses random word variable to get rhyming words from API
+            fetch(`https://api.datamuse.com/words?rel_rhy=${someJson}`)
+              .then((res) => res.json())
+              .then((json) => {
+                let rhymeJson = JSON.stringify(json);
+                // .split(":")[1]
+                // .split(",")[0]
+                // .replace(/["]+/g, "");
+                console.log(rhymeJson);
+                bot.sendMessage({
+                  to: channelID,
+                  message: `${rhymeJson}`,
+                });
+              });
           });
+
+        
+
         break;
     }
   }
