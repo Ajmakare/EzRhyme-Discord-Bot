@@ -1,54 +1,45 @@
-var Discord = require("discord.io");
+const Discord = require("discord.io");
+const auth = require("./auth.json");
+const axios = require("axios");
+const fetch = require("node-fetch");
 
-var logger = require("winston");
-
-var auth = require("./auth.json");
-
-// Configure logger settings
-
-logger.remove(logger.transports.Console);
-
-logger.add(new logger.transports.Console(), {
-  colorize: true,
-});
-
-logger.level = "debug";
-
-// Initialize Discord Bot
-
-var bot = new Discord.Client({
+const bot = new Discord.Client({
   token: auth.token,
 
   autorun: true,
 });
 
-bot.on("ready", function (evt) {
-  logger.info("Connected");
-
-  logger.info("Logged in as: ");
-
-  logger.info(bot.username + " - (" + bot.id + ")");
+bot.on("ready", () => {
+  console.log("bot logged in");
 });
 
+//Functionality
 bot.on("message", function (user, userID, channelID, message, evt) {
-  // It will listen for messages that will start with `!`
-
-  if (message.substring(0, 1) == "!") {
+  if (message.substring(0, 1) == "^") {
     var args = message.substring(1).split(" ");
-
     var cmd = args[0];
-
     args = args.splice(1);
 
     switch (cmd) {
       case "ping":
         bot.sendMessage({
           to: channelID,
-
-          message: "pong",
+          message: "Pong!",
         });
+        break;
 
-
+      case "testAPI":
+        fetch("https://api.datamuse.com/words?sp=hipopatamus")
+          .then((res) => res.json())
+          .then((json) => {
+            //View in console (pure JSON)
+            let someJson = JSON.stringify(json);
+            console.log(someJson);
+            bot.sendMessage({
+              to: channelID,
+              message: someJson,
+            });
+          });
         break;
     }
   }

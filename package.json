@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.24.0",
     "discord.io": "github:izy521/discord.io",
+    "node-fetch": "^2.6.6",
     "winston": "^3.3.3"
   }
 }
