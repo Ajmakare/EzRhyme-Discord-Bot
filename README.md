@@ -1,2 +1,2 @@
 # DiscordLyricBot
- A discord lyric bot concept
+ Concept: a discord rhyming "game" bot
