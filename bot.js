@@ -47,18 +47,19 @@ bot.on("message", function (user, userID, channelID, message, evt) {
               .then((res) => res.json())
               .then((json) => {
                 let rhymeJson = JSON.stringify(json);
-                // .split(":")[1]
-                // .split(",")[0]
-                // .replace(/["]+/g, "");
                 console.log(rhymeJson);
                 bot.sendMessage({
                   to: channelID,
                   message: `${rhymeJson}`,
                 });
+                rhymeJson = JSON.parse(rhymeJson)
+                var data = [];
+                for (let i = 0; i < rhymeJson.length; i++) {
+                  data.push(rhymeJson[i].word);
+                  console.log(data[i]);
+                }
               });
           });
-
-        
 
         break;
     }
