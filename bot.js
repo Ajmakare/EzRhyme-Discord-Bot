@@ -3,6 +3,7 @@ const auth = require("./auth.json");
 const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
+const { MessageCollector } = require("discord.js-collector");
 
 const bot = new Discord.Client({
   token: auth.token,
@@ -11,7 +12,7 @@ const bot = new Discord.Client({
 });
 
 bot.on("ready", () => {
-  console.log("bot logged in");
+  console.log("EzRhyme Bot is online");
 });
 
 //Functionality
@@ -22,7 +23,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     args = args.splice(1);
 
     var word = [];
-    var data = [];
+    var rData = [];
 
     switch (cmd) {
       case "ping":
@@ -32,18 +33,9 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         });
         break;
 
-      case "testAPI":
-        //Generate random word variable for rhyming API and sendMessage
-        // fetch("https://random-words-api.vercel.app/word")
-        //   .then((res) => res.json())
-        //   .then((json) => {
-        //     let someJson = JSON.stringify(json)
-        //       .split(":")[1]
-        //       .split(",")[0]
-        //       .replace(/["]+/g, "");
-        //     console.log(someJson);
+      case "rhyme":
         var flag = true;
-        while (flag == true) {
+        while (flag === true) {
           word = randomWords(1);
           //Uses random word variable to get rhyming words from API
           fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
@@ -54,16 +46,17 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                 rhymeJson = JSON.parse(rhymeJson);
 
                 for (let i = 0; i < rhymeJson.length; i++) {
-                  data.push(rhymeJson[i].word);
-                  
+                  rData.push(rhymeJson[i].word);
+                  //console.log(rData[0]);
                 }
-                console.log(data[0]);
-
                 bot.sendMessage({
                   to: channelID,
-                  message: `What rhymes with the word: ${word}`,
+                  message: `What rhymes with the word ${word}?`,
                 });
-                flag = false;
+
+                bot.on("message", (message) => {
+                  
+                });
               } else {
                 console.error("Error - API gave word with no rhyme DB");
               }
