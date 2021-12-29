@@ -3,11 +3,11 @@ const auth = require("./auth.json");
 const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
-const { MessageCollector } = require("discord.js-collector");
+const { Intents } = require("discord.js");
 
 const bot = new Discord.Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
   token: auth.token,
-
   autorun: true,
 });
 
@@ -44,24 +44,32 @@ bot.on("message", function (user, userID, channelID, message, evt) {
               let rhymeJson = JSON.stringify(json);
               if (rhymeJson.charAt(1) != "]") {
                 rhymeJson = JSON.parse(rhymeJson);
-
                 for (let i = 0; i < rhymeJson.length; i++) {
                   rData.push(rhymeJson[i].word);
-                  //console.log(rData[0]);
                 }
                 bot.sendMessage({
                   to: channelID,
                   message: `What rhymes with the word ${word}?`,
                 });
-
-                bot.on("message", (message) => {
-                  
-                });
+                //Bot listens to messages in channel
+                bot.on(
+                  "message",
+                  function (user, userID, channelID, message, rawEvent) {
+                    for (let j = 1; j < rData.length; j++) {
+                      console.log(rData[j]);
+                      if (message === rData[j]) {
+                        bot.sendMessage({
+                          to: channelID,
+                          message: "Correct",
+                        });
+                      }
+                    }
+                  }
+                );
               } else {
                 console.error("Error - API gave word with no rhyme DB");
               }
             });
-
           break;
         }
     }
