@@ -25,6 +25,8 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     var word = [];
     var rData = [];
 
+    var maxCounter = 10
+
     switch (cmd) {
       case "ping":
         bot.sendMessage({
@@ -36,6 +38,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
       case "rhyme":
         var flag = true;
         while (flag === true) {
+          flag = false
           word = randomWords(1);
           //Uses random word variable to get rhyming words from API
           fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
@@ -45,28 +48,46 @@ bot.on("message", function (user, userID, channelID, message, evt) {
               if (rhymeJson.charAt(1) != "]") {
                 rhymeJson = JSON.parse(rhymeJson);
                 for (let i = 0; i < rhymeJson.length; i++) {
-                  rData.push(rhymeJson[i].word);
+                  let temp = rhymeJson[i].word;
+                  if (temp.includes(" ") == false) {
+                    rData.push(rhymeJson[i].word);
+                  }
                 }
-                bot.sendMessage({
-                  to: channelID,
-                  message: `What rhymes with the word ${word}?`,
-                });
-                //Bot listens to messages in channel
-                bot.on(
-                  "message",
-                  function (user, userID, channelID, message, rawEvent) {
-                    for (let j = 1; j < rData.length; j++) {
-                      console.log(rData[j]);
-                      if (message === rData[j]) {
-                        bot.sendMessage({
-                          to: channelID,
-                          message: "Correct",
-                        });
+                var counter = rData.length;
+                if (counter >= 10) {
+                  bot.sendMessage({
+                    to: channelID,
+                    message:
+                      `Name 10 words that rhyme with ${word}! \nPossible words: ` +
+                      counter,
+                  });
+                  //Bot listens to messages in channel
+                  bot.on(
+                    "message",
+                    function (user, userID, channelID, message, rawEvent) {
+                      for (let j = 1; j < rData.length; j++) {
+                        console.log(rData[j]);
+                        if (message === rData[j]) {
+                          counter--;
+                          maxCounter--;
+                          bot.sendMessage({
+                            to: channelID,
+                            message: "Correct \nPossible words: " + counter,
+                          });
+                          if(maxCounter == 0){
+                            bot.sendMessage({
+                              to: channelID,
+                              message: `Good Job! You rhymed ${word} with 10 words! Try to keep going... or do ^rhyme for another!`,
+                            });
+                            break;
+                          }
+                        }
                       }
                     }
-                  }
-                );
+                  );
+                }
               } else {
+                flag=true;
                 console.error("Error - API gave word with no rhyme DB");
               }
             });
