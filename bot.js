@@ -25,7 +25,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     var word = [];
     var rData = [];
 
-    var maxCounter = 10
+    var maxCounter = 10;
 
     switch (cmd) {
       case "ping":
@@ -38,7 +38,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
       case "rhyme":
         var flag = true;
         while (flag === true) {
-          flag = false
+          flag = false;
           word = randomWords(1);
           //Uses random word variable to get rhyming words from API
           fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
@@ -74,7 +74,13 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                             to: channelID,
                             message: "Correct \nPossible words: " + counter,
                           });
-                          if(maxCounter == 0){
+                          bot.addReaction({
+                            channelID: channelID,
+                            messageID: message,
+                            reaction: "☑️",
+                          });
+
+                          if (maxCounter == 0) {
                             bot.sendMessage({
                               to: channelID,
                               message: `Good Job! You rhymed ${word} with 10 words! Try to keep going... or do ^rhyme for another!`,
@@ -87,7 +93,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                   );
                 }
               } else {
-                flag=true;
+                flag = true;
                 console.error("Error - API gave word with no rhyme DB");
               }
             });
