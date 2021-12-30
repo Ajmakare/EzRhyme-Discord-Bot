@@ -38,7 +38,6 @@ bot.on("message", function (user, userID, channelID, message, evt) {
       case "rhyme":
         var flag = true;
         while (flag === true) {
-          flag = false;
           word = randomWords(1);
           //Uses random word variable to get rhyming words from API
           fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
@@ -46,6 +45,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
             .then((json) => {
               let rhymeJson = JSON.stringify(json);
               if (rhymeJson.charAt(1) != "]") {
+                flag = false;
                 rhymeJson = JSON.parse(rhymeJson);
                 for (let i = 0; i < rhymeJson.length; i++) {
                   let temp = rhymeJson[i].word;
@@ -54,12 +54,13 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                   }
                 }
                 var counter = rData.length;
-                if (counter >= 10) {
+                if (counter >= 20) {
                   bot.sendMessage({
                     to: channelID,
                     message:
-                      `Name 10 words that rhyme with ${word}! \nPossible words: ` +
-                      counter,
+                      `:wave: Name 10 words that rhyme with **${word}**! :point_right: Possible words: ` +
+                      counter +
+                      "!",
                   });
                   //Bot listens to messages in channel
                   bot.on(
@@ -70,35 +71,37 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                         if (message === rData[j]) {
                           counter--;
                           maxCounter--;
-                          bot.sendMessage({
-                            to: channelID,
-                            message: "Correct \nPossible words: " + counter,
-                          });
-                          bot.addReaction({
-                            channelID: channelID,
-                            messageID: message,
-                            reaction: "☑️",
-                          });
-
                           if (maxCounter == 0) {
                             bot.sendMessage({
                               to: channelID,
-                              message: `Good Job! You rhymed ${word} with 10 words! Try to keep going... or do ^rhyme for another!`,
+                              message: `:astonished: You rhymed **${word}** with 10 words! :smile:`,
                             });
-                            break;
+                            return;
                           }
+                          bot.sendMessage({
+                            to: channelID,
+                            message:
+                              "☑️ **" + message + `** rhymes with the word **${word}!** *` + maxCounter +
+                              " more!* :point_right: Possible words: " +
+                              counter +
+                              "!",
+                          });
+                        } else if (message === "rhyme") {
+                          console.log("test")
+                          break;
                         }
                       }
                     }
                   );
                 }
               } else {
-                flag = true;
+                //flag = true;
                 console.error("Error - API gave word with no rhyme DB");
               }
             });
           break;
         }
+        break;
     }
   }
 });
