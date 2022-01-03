@@ -55,39 +55,35 @@ bot.on("message", function (user, userID, channelID, message, evt) {
               if (rhymeJson.charAt(1) != "]") {
                 flag = false;
                 rhymeJson = JSON.parse(rhymeJson);
-                for (let i = 0; i < rhymeJson.length; i++) {
-                  let temp = rhymeJson[i].word;
-                  if (temp.includes(" ") == false) {
-                    rData.push(rhymeJson[i].word);
-                  }
-                }
+                fillJsonArray(rhymeJson, rData) //Helper function defined below
                 var counter = rData.length;
                 if (counter >= 20) {
-                  initialMessage(channelID, word, counter);
+                  initialMessage(channelID, word, counter); //Helper function defined below
                   //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
                   bot.on(
                     "message",
                     function (user, userID, channelID, message, rawEvent) {
                       for (let j = 1; j < rData.length; j++) {
-                        console.log(rData[j]);
+                        //console.log(rData[j]);
+                        if (message === "^rhyme") {
+                          console.log("test");
+                          break;
+                        }
                         if (message === rData[j]) {
                           counter--;
                           maxCounter--;
                           if (maxCounter == 0) {
-                            finalMessage(channelID, word)
+                            finalMessage(channelID, word) //Helper function defined below
                             return;
                           }
-                          followUpMessage(channelID, message, word, maxCounter, counter)
-                        } else if (message === "rhyme") {
-                          console.log("test");
-                          break;
-                        }
+                          followUpMessage(channelID, message, word, maxCounter, counter) //Helper function defined below
+                        } 
                       }
                     }
                   );
                 }
               } else {
-                //flag = true;
+                flag = true;
                 console.error("Error - API gave word with no rhyme DB");
               }
             });
@@ -97,6 +93,17 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     }
   }
 });
+//HELPER FUNCTIONS BELOW
+
+//Function to fill an array with JSON data (in this case, word (the words that rhyme with the random generated word))
+function fillJsonArray(json, arr){
+  for (let i = 0; i < json.length; i++) {
+    let temp = json[i].word;
+    if (temp.includes(" ") == false) {
+      arr.push(json[i].word);
+    }
+  }
+}
 
 
 //Basic helper function for first message bot sends on ^rhyme command
@@ -132,3 +139,5 @@ function finalMessage(channelID, word) {
     message: `:astonished: You rhymed **${word}** with 10 words! :smile:`,
   });
 }
+
+
