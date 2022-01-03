@@ -53,7 +53,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
             .then((json) => {
               let rhymeJson = JSON.stringify(json);
               if (rhymeJson.charAt(1) != "]") {
-                flag = false;
+                //flag = false;
                 rhymeJson = JSON.parse(rhymeJson);
                 fillJsonArray(rhymeJson, rData) //Helper function defined below
                 var counter = rData.length;
@@ -70,6 +70,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                           break;
                         }
                         if (message === rData[j]) {
+                          rData = rData.filter(e => e !== message);
                           counter--;
                           maxCounter--;
                           if (maxCounter == 0) {
