@@ -55,13 +55,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                 }
                 var counter = rData.length;
                 if (counter >= 20) {
-                  bot.sendMessage({
-                    to: channelID,
-                    message:
-                      `:wave: Name 10 words that rhyme with **${word}**! :point_right: Possible words: ` +
-                      counter +
-                      "!",
-                  });
+                  initialMessage(channelID, word, counter);
                   //Bot listens to messages in channel
                   bot.on(
                     "message",
@@ -72,22 +66,12 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                           counter--;
                           maxCounter--;
                           if (maxCounter == 0) {
-                            bot.sendMessage({
-                              to: channelID,
-                              message: `:astonished: You rhymed **${word}** with 10 words! :smile:`,
-                            });
+                            finalMessage(channelID, word)
                             return;
                           }
-                          bot.sendMessage({
-                            to: channelID,
-                            message:
-                              "☑️ **" + message + `** rhymes with the word **${word}!** *` + maxCounter +
-                              " more!* :point_right: Possible words: " +
-                              counter +
-                              "!",
-                          });
+                          followUpMessage(channelID, message, word, maxCounter, counter)
                         } else if (message === "rhyme") {
-                          console.log("test")
+                          console.log("test");
                           break;
                         }
                       }
@@ -105,3 +89,34 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     }
   }
 });
+
+function initialMessage(channelID, word, counter) {
+  bot.sendMessage({
+    to: channelID,
+    message:
+      `:wave: Name 10 words that rhyme with **${word}**! :point_right: Possible words: ` +
+      counter +
+      "!",
+  });
+}
+
+function followUpMessage(channelID, message, word, maxCounter, counter){
+  bot.sendMessage({
+    to: channelID,
+    message:
+      "☑️ **" +
+      message +
+      `** rhymes with the word **${word}!** *` +
+      maxCounter +
+      " more!* :point_right: Possible words: " +
+      counter +
+      "!",
+  });
+}
+
+function finalMessage(channelID, word) {
+  bot.sendMessage({
+    to: channelID,
+    message: `:astonished: You rhymed **${word}** with 10 words! :smile:`,
+  });
+}
