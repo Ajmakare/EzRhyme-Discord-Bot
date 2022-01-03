@@ -5,29 +5,33 @@ const fetch = require("node-fetch");
 var randomWords = require("random-words");
 const { Intents } = require("discord.js");
 
+//Creating bot with token
 const bot = new Discord.Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
   token: auth.token,
   autorun: true,
 });
 
+//Logging to console when bot is online
 bot.on("ready", () => {
   console.log("EzRhyme Bot is online");
 });
 
 //Functionality
 bot.on("message", function (user, userID, channelID, message, evt) {
+  //Command prefix created
   if (message.substring(0, 1) == "^") {
     var args = message.substring(1).split(" ");
     var cmd = args[0];
     args = args.splice(1);
 
+    //Necassary variable initializations for "rhyme" case
     var word = [];
     var rData = [];
-
     var maxCounter = 10;
 
     switch (cmd) {
+      //Simple test command to check bots connection from time to time
       case "ping":
         bot.sendMessage({
           to: channelID,
@@ -35,11 +39,15 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         });
         break;
 
+      /*Main bot functionality/concept:
+      *see README*
+      */
       case "rhyme":
         var flag = true;
         while (flag === true) {
+          //Generates a random word and uses that word to retrieve the rhyming JSON from the datamuse API
+          //It then fills an array, rData, with all the words in the JSON that rhyme with the random word generated
           word = randomWords(1);
-          //Uses random word variable to get rhyming words from API
           fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
             .then((res) => res.json())
             .then((json) => {
@@ -56,7 +64,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
                 var counter = rData.length;
                 if (counter >= 20) {
                   initialMessage(channelID, word, counter);
-                  //Bot listens to messages in channel
+                  //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
                   bot.on(
                     "message",
                     function (user, userID, channelID, message, rawEvent) {
@@ -90,6 +98,8 @@ bot.on("message", function (user, userID, channelID, message, evt) {
   }
 });
 
+
+//Basic helper function for first message bot sends on ^rhyme command
 function initialMessage(channelID, word, counter) {
   bot.sendMessage({
     to: channelID,
@@ -100,6 +110,7 @@ function initialMessage(channelID, word, counter) {
   });
 }
 
+//Basic helper function for follow up message bot sends after a correct word is listened to
 function followUpMessage(channelID, message, word, maxCounter, counter){
   bot.sendMessage({
     to: channelID,
@@ -114,6 +125,7 @@ function followUpMessage(channelID, message, word, maxCounter, counter){
   });
 }
 
+//Basic helper function for final bot sends when word has been rhymed 10 times
 function finalMessage(channelID, word) {
   bot.sendMessage({
     to: channelID,
