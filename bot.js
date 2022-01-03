@@ -3,11 +3,9 @@ const auth = require("./auth.json");
 const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
-const { Intents } = require("discord.js");
 
 //Creating bot with token
 const bot = new Discord.Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
   token: auth.token,
   autorun: true,
 });
@@ -18,17 +16,17 @@ bot.on("ready", () => {
 });
 
 //Functionality
-bot.on("message", function (user, userID, channelID, message, evt) {
+bot.on("message", (user, userID, channelID, message, evt) => {
   //Command prefix created
   if (message.substring(0, 1) == "^") {
     var args = message.substring(1).split(" ");
     var cmd = args[0];
     args = args.splice(1);
 
-    //Necassary variable initializations for "rhyme" case
+    //Necassary variable initializations for main "rhyme" case
     var word = [];
     var rData = [];
-    var maxCounter = 10;
+    var maxCounter;
 
     switch (cmd) {
       //Simple test command to check bots connection from time to time
@@ -40,14 +38,15 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         break;
 
       /*Main bot functionality/concept:
-      *see README*
-      */
+       *see README*
+       */
       case "rhyme":
         var flag = true;
         while (flag === true) {
           //Generates a random word and uses that word to retrieve the rhyming JSON from the datamuse API
           //It then fills an array, rData, with all the words in the JSON that rhyme with the random word generated
           word = randomWords(1);
+          maxCounter = 10;
           fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
             .then((res) => res.json())
             .then((json) => {
@@ -55,31 +54,15 @@ bot.on("message", function (user, userID, channelID, message, evt) {
               if (rhymeJson.charAt(1) != "]") {
                 //flag = false;
                 rhymeJson = JSON.parse(rhymeJson);
-                fillJsonArray(rhymeJson, rData) //Helper function defined below
+                fillJsonArray(rhymeJson, rData); //Helper function defined below
                 var counter = rData.length;
                 if (counter >= 20) {
                   initialMessage(channelID, word, counter); //Helper function defined below
                   //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
                   bot.on(
                     "message",
-                    function (user, userID, channelID, message, rawEvent) {
-                      for (let j = 1; j < rData.length; j++) {
-                        //console.log(rData[j]);
-                        if (message === "^rhyme") {
-                          console.log("test");
-                          break;
-                        }
-                        if (message === rData[j]) {
-                          rData = rData.filter(e => e !== message);
-                          counter--;
-                          maxCounter--;
-                          if (maxCounter == 0) {
-                            finalMessage(channelID, word) //Helper function defined below
-                            return;
-                          }
-                          followUpMessage(channelID, message, word, maxCounter, counter) //Helper function defined below
-                        } 
-                      }
+                    (user, userID, channelID, message, rawEvent) => {
+                      verifyAnswers(rData, message, counter, maxCounter, channelID, message, word)
                     }
                   );
                 }
@@ -94,10 +77,10 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     }
   }
 });
-//HELPER FUNCTIONS BELOW
+//HELPER FUNCTIONS
 
 //Function to fill an array with JSON data (in this case, word (the words that rhyme with the random generated word))
-function fillJsonArray(json, arr){
+function fillJsonArray(json, arr) {
   for (let i = 0; i < json.length; i++) {
     let temp = json[i].word;
     if (temp.includes(" ") == false) {
@@ -105,7 +88,25 @@ function fillJsonArray(json, arr){
     }
   }
 }
-
+function verifyAnswers(rData, message, counter, maxCounter, channelID, message, word) {
+  for (let j = 1; j < rData.length; j++) {
+    //console.log(rData[j]);
+    if (message === "^rhyme") {
+      console.log("test");
+      return;
+    }
+    if (message === rData[j]) {
+      rData = rData.filter((e) => e !== message);
+      counter--;
+      maxCounter--;
+      if (maxCounter == 0) {
+        finalMessage(channelID, word); //Helper function defined below
+        break;
+      }
+      followUpMessage(channelID, message, word, maxCounter, counter); //Helper function defined below
+    }
+  }
+}
 
 //Basic helper function for first message bot sends on ^rhyme command
 function initialMessage(channelID, word, counter) {
@@ -119,7 +120,7 @@ function initialMessage(channelID, word, counter) {
 }
 
 //Basic helper function for follow up message bot sends after a correct word is listened to
-function followUpMessage(channelID, message, word, maxCounter, counter){
+function followUpMessage(channelID, message, word, maxCounter, counter) {
   bot.sendMessage({
     to: channelID,
     message:
@@ -140,5 +141,3 @@ function finalMessage(channelID, word) {
     message: `:astonished: You rhymed **${word}** with 10 words! :smile:`,
   });
 }
-
-
