@@ -62,7 +62,29 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                   bot.on(
                     "message",
                     (user, userID, channelID, message, rawEvent) => {
-                      verifyAnswers(rData, message, counter, maxCounter, channelID, message, word)
+                      for (let j = 1; j < rData.length; j++) {
+                        //console.log(rData[j]);
+                        if (message === "^rhyme") {
+                          console.log("test");
+                          return;
+                        }
+                        if (message === rData[j]) {
+                          rData = rData.filter((e) => e !== message);
+                          counter--;
+                          maxCounter--;
+                          if (maxCounter == 0) {
+                            finalMessage(channelID, word); //Helper function defined below
+                            break;
+                          }
+                          followUpMessage(
+                            channelID,
+                            message,
+                            word,
+                            maxCounter,
+                            counter
+                          ); //Helper function defined below
+                        }
+                      }
                     }
                   );
                 }
@@ -85,25 +107,6 @@ function fillJsonArray(json, arr) {
     let temp = json[i].word;
     if (temp.includes(" ") == false) {
       arr.push(json[i].word);
-    }
-  }
-}
-function verifyAnswers(rData, message, counter, maxCounter, channelID, message, word) {
-  for (let j = 1; j < rData.length; j++) {
-    //console.log(rData[j]);
-    if (message === "^rhyme") {
-      console.log("test");
-      return;
-    }
-    if (message === rData[j]) {
-      rData = rData.filter((e) => e !== message);
-      counter--;
-      maxCounter--;
-      if (maxCounter == 0) {
-        finalMessage(channelID, word); //Helper function defined below
-        break;
-      }
-      followUpMessage(channelID, message, word, maxCounter, counter); //Helper function defined below
     }
   }
 }
