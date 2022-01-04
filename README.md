@@ -1,6 +1,7 @@
 # DiscordRhymeBot
 
-![EzR-logos3](https://user-images.githubusercontent.com/92825395/148104923-b805badc-1410-46d4-a5b7-238f3e95dc5a.jpeg)
+![unknown](https://user-images.githubusercontent.com/92825395/148105223-f63d1632-61a1-4822-ace2-fc281122dbb0.png)
+
 
 A command will announce a word that users should try to rhyme with. The bot will listen and tell you if you are correct or not (your word rhymes with the word announced or not). It will continue to listen until all words have been said that rhyme with announced word (checks for 10 words).
 
