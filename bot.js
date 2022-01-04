@@ -115,9 +115,9 @@ function initialMessage(channelID, word, counter) {
   bot.sendMessage({
     to: channelID,
     message:
-      `:wave: Name 10 words that rhyme with **${word}**! :point_right: Possible words: ` +
+      `:wave: Name 10 words that rhyme with **${word}**! :point_right: Possible words: **` +
       counter +
-      "!",
+      "**!",
   });
 }
 
@@ -130,9 +130,9 @@ function followUpMessage(channelID, message, word, maxCounter, counter) {
       message +
       `** rhymes with the word **${word}!** *` +
       maxCounter +
-      " more!* :point_right: Possible words: " +
+      " more!* :point_right: Possible words: **" +
       counter +
-      "!",
+      "**!",
   });
 }
 
