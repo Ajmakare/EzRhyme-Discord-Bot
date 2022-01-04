@@ -40,7 +40,8 @@ bot.on("message", (user, userID, channelID, message, evt) => {
           "A fun, rhyming game bot! Work amongst your Discord friends to come up words that rhyme with a randomly generated word! \n**Author:** @Ezrue#4297 on Discord \n**Github:** github.com/Ajmakare/DiscordRhymeBot",
       });
       return;
-    } else if (cmd === "reset") {
+    }
+    if (cmd === "reset") {
       rData = [];
       flag = true;
       check = undefined;
@@ -54,7 +55,8 @@ bot.on("message", (user, userID, channelID, message, evt) => {
           "** reset the game. Do ^rhyme to start a new one! :hugging:",
       });
       return;
-    } else if (cmd === "rhyme") {
+    }
+    if (cmd === "rhyme") {
       /*Main bot functionality/concept:
        *see README*
        */
@@ -72,10 +74,11 @@ bot.on("message", (user, userID, channelID, message, evt) => {
           if (rhymeJson.charAt(1) != "]") {
             rhymeJson = JSON.parse(rhymeJson);
             check = fillJsonArray(rhymeJson, rData); //Helper function defined below
-            console.log(check);
 
             counter = rData.length;
-            if (counter >= 30) {
+            console.log(counter)
+            if (counter >= 10) {
+              
               console.log(check);
               initialMessage(channelID, word, counter, check, maxCounter); //Helper function defined below
               //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
@@ -95,6 +98,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                             finalMessage(channelID, word); //Helper function defined below
                             rData = [];
                             flag = true;
+                            check = undefined;
                             maxCounter = 10;
                             return;
                           }
@@ -113,8 +117,12 @@ bot.on("message", (user, userID, channelID, message, evt) => {
               );
               //}
             }
+            else{
+              console.error("Counter error");
+            }
+            
           } else {
-            console.error("Error - API gave word with no rhyme DB");
+            console.error("Invalid word error");
           }
         });
     }
