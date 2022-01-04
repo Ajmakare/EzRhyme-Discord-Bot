@@ -28,74 +28,73 @@ bot.on("message", (user, userID, channelID, message, evt) => {
     var rData = [];
     var maxCounter;
 
-    switch (cmd) {
-      //Simple test command to check bots connection from time to time
-      case "ping":
-        bot.sendMessage({
-          to: channelID,
-          message: "Pong!",
-        });
-        break;
-
+    //Simple test command to check bots connection from time to time
+    if (cmd === "ping") {
+      bot.sendMessage({
+        to: channelID,
+        message: "Pong!",
+      });
+      return;
+    } else if (cmd === "rhyme") {
       /*Main bot functionality/concept:
        *see README*
        */
-      case "rhyme":
-        var flag = true;
-        while (flag === true) {
-          //Generates a random word and uses that word to retrieve the rhyming JSON from the datamuse API
-          //It then fills an array, rData, with all the words in the JSON that rhyme with the random word generated
-          word = randomWords(1);
-          maxCounter = 10;
-          fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
-            .then((res) => res.json())
-            .then((json) => {
-              let rhymeJson = JSON.stringify(json);
-              if (rhymeJson.charAt(1) != "]") {
-                //flag = false;
-                rhymeJson = JSON.parse(rhymeJson);
-                fillJsonArray(rhymeJson, rData); //Helper function defined below
-                var counter = rData.length;
-                if (counter >= 20) {
-                  initialMessage(channelID, word, counter); //Helper function defined below
-                  //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
-                  bot.on(
-                    "message",
-                    (user, userID, channelID, message, rawEvent) => {
-                      for (let j = 1; j < rData.length; j++) {
-                        //console.log(rData[j]);
-                        if (message === "^rhyme") {
-                          console.log("test");
-                          return;
-                        }
-                        if (message === rData[j]) {
-                          rData = rData.filter((e) => e !== message);
+      //Generates a random word and uses that word to retrieve the rhyming JSON from the datamuse API
+      //It then fills an array, rData, with all the words in the JSON that rhyme with the random word generated
+      word = randomWords(1);
+      maxCounter = 10;
+      fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
+        .then((res) => res.json())
+        .then((json) => {
+          let rhymeJson = JSON.stringify(json);
+          if (rhymeJson.charAt(1) != "]") {
+            rhymeJson = JSON.parse(rhymeJson);
+            fillJsonArray(rhymeJson, rData); //Helper function defined below
+            var counter = rData.length;
+            if (counter >= 20) {
+              initialMessage(channelID, word, counter); //Helper function defined below
+              //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
+              //while (maxCounter > -1) {
+              bot.on(
+                "message",
+                (user, userID, channelID, message2, rawEvent) => {
+                  if (maxCounter != 0) {
+                    for (let j = 1; j < rData.length; j++) {
+                      console.log(rData[j]);
+                      if (message2 != "^rhyme") {
+                        if (message2 === rData[j]) {
+                          rData = rData.filter((e) => e !== message2);
                           counter--;
                           maxCounter--;
                           if (maxCounter == 0) {
                             finalMessage(channelID, word); //Helper function defined below
-                            break;
+                            return;
                           }
                           followUpMessage(
                             channelID,
-                            message,
+                            message2,
                             word,
                             maxCounter,
                             counter
                           ); //Helper function defined below
                         }
+                      } else {
+                        console.log("rhyme command executed twice");
+                        break;
                       }
                     }
-                  );
+                  }
+                  else if(message2 === "^rhyme"){
+                    return;
+                  }
                 }
-              } else {
-                flag = true;
-                console.error("Error - API gave word with no rhyme DB");
-              }
-            });
-          break;
-        }
-        break;
+              );
+              //}
+            }
+          } else {
+            console.error("Error - API gave word with no rhyme DB");
+          }
+        });
     }
   }
 });
