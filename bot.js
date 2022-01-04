@@ -28,11 +28,12 @@ bot.on("message", (user, userID, channelID, message, evt) => {
     var rData = [];
     var maxCounter;
 
-    //Simple test command to check bots connection from time to time
-    if (cmd === "ping") {
+    //Simple about the bot command
+    if (cmd === "about") {
       bot.sendMessage({
         to: channelID,
-        message: "Pong!",
+        message:
+          "A fun, rhyming game bot! Work amongst your Discord friends to come up words that rhyme with a randonmly generated word! \n**Author:** @Ezrue#4297 on Discord \n**Github:** github.com/Ajmakare/DiscordRhymeBot",
       });
       return;
     } else if (cmd === "rhyme") {
@@ -83,8 +84,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                         break;
                       }
                     }
-                  }
-                  else if(message2 === "^rhyme"){
+                  } else if (message2 === "^rhyme") {
                     return;
                   }
                 }
