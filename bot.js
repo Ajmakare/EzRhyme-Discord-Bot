@@ -33,7 +33,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
       bot.sendMessage({
         to: channelID,
         message:
-          "A fun, rhyming game bot! Work amongst your Discord friends to come up words that rhyme with a randonmly generated word! \n**Author:** @Ezrue#4297 on Discord \n**Github:** github.com/Ajmakare/DiscordRhymeBot",
+          "A fun, rhyming game bot! Work amongst your Discord friends to come up words that rhyme with a randomly generated word! \n**Author:** @Ezrue#4297 on Discord \n**Github:** github.com/Ajmakare/DiscordRhymeBot",
       });
       return;
     } else if (cmd === "rhyme") {
