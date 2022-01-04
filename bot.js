@@ -3,6 +3,7 @@ const auth = require("./auth.json");
 const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
+
 var rData = [];
 var word = [];
 var check;
@@ -28,9 +29,6 @@ bot.on("message", (user, userID, channelID, message, evt) => {
     var args = message.substring(1).split(" ");
     var cmd = args[0];
     args = args.splice(1);
-
-    //Necassary variable initializations for main "rhyme" case
-    //var word = [];
 
     //Simple about the bot command
     if (cmd === "about") {
@@ -76,13 +74,9 @@ bot.on("message", (user, userID, channelID, message, evt) => {
             check = fillJsonArray(rhymeJson, rData); //Helper function defined below
 
             counter = rData.length;
-            console.log(counter)
             if (counter >= 10) {
-              
-              console.log(check);
               initialMessage(channelID, word, counter, check, maxCounter); //Helper function defined below
               //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
-              //while (maxCounter > -1) {
               bot.on(
                 "message",
                 (user, userID, channelID, message2, rawEvent) => {
@@ -115,14 +109,16 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                   }
                 }
               );
-              //}
-            }
-            else{
+            } else {
               console.error("Counter error");
+              rData = [];
+              flag = true;
+              check = undefined;
+              maxCounter = 10;
             }
-            
           } else {
             console.error("Invalid word error");
+            flag = true;
           }
         });
     }
