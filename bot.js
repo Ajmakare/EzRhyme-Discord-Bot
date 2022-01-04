@@ -6,6 +6,7 @@ var randomWords = require("random-words");
 var rData = [];
 var word = [];
 var check;
+var counter;
 var flag = true;
 var maxCounter = 10;
 
@@ -39,6 +40,20 @@ bot.on("message", (user, userID, channelID, message, evt) => {
           "A fun, rhyming game bot! Work amongst your Discord friends to come up words that rhyme with a randomly generated word! \n**Author:** @Ezrue#4297 on Discord \n**Github:** github.com/Ajmakare/DiscordRhymeBot",
       });
       return;
+    } else if (cmd === "reset") {
+      rData = [];
+      flag = true;
+      check = undefined;
+      maxCounter = 10;
+
+      bot.sendMessage({
+        to: channelID,
+        message:
+          ":grimacing: **" +
+          user +
+          "** reset the game. Do ^rhyme to start a new one! :hugging:",
+      });
+      return;
     } else if (cmd === "rhyme") {
       /*Main bot functionality/concept:
        *see README*
@@ -59,8 +74,9 @@ bot.on("message", (user, userID, channelID, message, evt) => {
             check = fillJsonArray(rhymeJson, rData); //Helper function defined below
             console.log(check);
 
-            var counter = rData.length;
+            counter = rData.length;
             if (counter >= 30) {
+              console.log(check);
               initialMessage(channelID, word, counter, check, maxCounter); //Helper function defined below
               //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
               //while (maxCounter > -1) {
@@ -101,18 +117,6 @@ bot.on("message", (user, userID, channelID, message, evt) => {
             console.error("Error - API gave word with no rhyme DB");
           }
         });
-    } else if (cmd === "reset") {
-      rData = [];
-      word = [];
-      flag = true;
-      maxCounter = 10;
-
-      bot.sendMessage({
-        to: channelID,
-        message:
-          ":grimacing: **"+ user + "** reset the game. Do ^rhyme to start a new one! :hugging:",
-      });
-      return;
     }
   }
 });
@@ -133,8 +137,8 @@ function fillJsonArray(json, arr) {
 }
 
 //Basic helper function for first message bot sends on ^rhyme command
-function initialMessage(channelID, word, counter, check, maxCounter) {
-  if (check === true) {
+async function initialMessage(channelID, word, counter, check, maxCounter) {
+  if (check) {
     bot.sendMessage({
       to: channelID,
       message:
