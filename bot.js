@@ -4,7 +4,10 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
 var rData = [];
+var word = [];
 var check;
+var flag = true;
+var maxCounter = 10;
 
 //Creating bot with token
 const bot = new Discord.Client({
@@ -27,7 +30,6 @@ bot.on("message", (user, userID, channelID, message, evt) => {
 
     //Necassary variable initializations for main "rhyme" case
     //var word = [];
-    var maxCounter;
 
     //Simple about the bot command
     if (cmd === "about") {
@@ -43,9 +45,10 @@ bot.on("message", (user, userID, channelID, message, evt) => {
        */
       //Generates a random word and uses that word to retrieve the rhyming JSON from the datamuse API
       //It then fills an array, rData, with all the words in the JSON that rhyme with the random word generated
-      var word = [];
-      word = randomWords(1);
-      maxCounter = 10;
+      if (flag) {
+        word = randomWords(1);
+        flag = false;
+      }
 
       fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
         .then((res) => res.json())
@@ -54,11 +57,11 @@ bot.on("message", (user, userID, channelID, message, evt) => {
           if (rhymeJson.charAt(1) != "]") {
             rhymeJson = JSON.parse(rhymeJson);
             check = fillJsonArray(rhymeJson, rData); //Helper function defined below
-            console.log(check)
-            
+            console.log(check);
+
             var counter = rData.length;
-            if (counter >= 20) {
-              initialMessage(channelID, word, counter, check); //Helper function defined below
+            if (counter >= 30) {
+              initialMessage(channelID, word, counter, check, maxCounter); //Helper function defined below
               //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
               //while (maxCounter > -1) {
               bot.on(
@@ -75,6 +78,8 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                           if (maxCounter == 0) {
                             finalMessage(channelID, word); //Helper function defined below
                             rData = [];
+                            flag = true;
+                            maxCounter = 10;
                             return;
                           }
                           followUpMessage(
@@ -87,9 +92,6 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                         }
                       }
                     }
-                  } else if (message2 === "^rhyme") {
-                    //rData = [];
-                    return;
                   }
                 }
               );
@@ -99,6 +101,18 @@ bot.on("message", (user, userID, channelID, message, evt) => {
             console.error("Error - API gave word with no rhyme DB");
           }
         });
+    } else if (cmd === "reset") {
+      rData = [];
+      word = [];
+      flag = true;
+      maxCounter = 10;
+
+      bot.sendMessage({
+        to: channelID,
+        message:
+          ":grimacing: **"+ user + "** reset the game. Do ^rhyme to start a new one! :hugging:",
+      });
+      return;
     }
   }
 });
@@ -119,7 +133,7 @@ function fillJsonArray(json, arr) {
 }
 
 //Basic helper function for first message bot sends on ^rhyme command
-function initialMessage(channelID, word, counter, check) {
+function initialMessage(channelID, word, counter, check, maxCounter) {
   if (check === true) {
     bot.sendMessage({
       to: channelID,
@@ -131,7 +145,10 @@ function initialMessage(channelID, word, counter, check) {
   } else {
     bot.sendMessage({
       to: channelID,
-      message: `already a game being played`,
+      message:
+        `:face_with_monocle: The current word to rhyme with is: **${word}**! *` +
+        maxCounter +
+        ` more!*`,
     });
   }
 }
