@@ -1,4 +1,4 @@
-const Discord = require("discord.io");
+var Discord = require("discord.io");
 const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
@@ -12,10 +12,11 @@ var flag = true;
 var maxCounter = 10;
 
 //Creating bot with token
-const bot = new Discord.Client({
+var bot = new Discord.Client({
   token: process.env.BOTTOKEN,
   autorun: true,
 });
+bot.setMaxListeners(50)
 
 //Logging to console when bot is online
 bot.on("ready", () => {

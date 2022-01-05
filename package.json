@@ -13,12 +13,9 @@
   "dependencies": {
     "axios": "^0.24.0",
     "discord.io": "github:izy521/discord.io",
-    "discord.js": "^13.5.0-dev.1640736337.1391c36",
-    "discord.js-collector": "^1.8.9",
     "dotenv": "^10.0.0",
     "node-fetch": "^2.6.6",
-    "random-words": "^1.1.1",
-    "winston": "^3.3.3"
+    "random-words": "^1.1.1"
   },
   "engines": {
     "node": "16.13.1"
