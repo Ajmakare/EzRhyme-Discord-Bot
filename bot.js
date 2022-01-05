@@ -1,8 +1,8 @@
 const Discord = require("discord.io");
-const auth = require("./auth.json");
 const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
+require("dotenv").config();
 
 var rData = [];
 var word = [];
@@ -13,7 +13,7 @@ var maxCounter = 10;
 
 //Creating bot with token
 const bot = new Discord.Client({
-  token: auth.token,
+  token: process.env.BOTTOKEN,
   autorun: true,
 });
 
