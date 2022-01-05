@@ -40,12 +40,12 @@ bot.on("message", (user, userID, channelID, message, evt) => {
       });
       return;
     }
+
     if (cmd === "reset") {
       rData = [];
       flag = true;
       check = undefined;
       maxCounter = 10;
-
       bot.sendMessage({
         to: channelID,
         message:
@@ -55,6 +55,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
       });
       return;
     }
+
     if (cmd === "rhyme") {
       /*Main bot functionality/concept:
        *see README*
@@ -65,7 +66,6 @@ bot.on("message", (user, userID, channelID, message, evt) => {
         word = randomWords(1);
         flag = false;
       }
-
       fetch(`https://api.datamuse.com/words?rel_rhy=${word}`)
         .then((res) => res.json())
         .then((json) => {
@@ -73,7 +73,6 @@ bot.on("message", (user, userID, channelID, message, evt) => {
           if (rhymeJson.charAt(1) != "]") {
             rhymeJson = JSON.parse(rhymeJson);
             check = fillJsonArray(rhymeJson, rData); //Helper function defined below
-
             counter = rData.length;
             if (counter >= 10) {
               initialMessage(channelID, word, counter, check, maxCounter); //Helper function defined below
@@ -128,6 +127,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
 //HELPER FUNCTIONS
 
 //Function to fill an array with JSON data (in this case, word (the words that rhyme with the random generated word))
+//Returns true if new array, false if old
 function fillJsonArray(json, arr) {
   if (arr.length === 0) {
     for (let i = 0; i < json.length; i++) {
