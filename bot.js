@@ -3,6 +3,7 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 var randomWords = require("random-words");
 require("dotenv").config();
+const { fillJsonArray, initialMessage, followUpMessage, finalMessage } = require("./functions");
 
 var rData = [];
 var word = [];
@@ -75,7 +76,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
             check = fillJsonArray(rhymeJson, rData); //Helper function defined below
             counter = rData.length;
             if (counter >= 10) {
-              initialMessage(channelID, word, counter, check, maxCounter); //Helper function defined below
+              initialMessage(channelID, word, counter, check, maxCounter,bot); //Helper function defined below
               //Bot listens to messages in channel and announces if a word has been said that rhymes with the generated word
               bot.on(
                 "message",
@@ -89,7 +90,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                           counter--;
                           maxCounter--;
                           if (maxCounter == 0) {
-                            finalMessage(channelID, message2, word); //Helper function defined below
+                            finalMessage(channelID, message2, word, bot); //Helper function defined below
                             rData = [];
                             flag = true;
                             check = undefined;
@@ -101,7 +102,8 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                             message2,
                             word,
                             maxCounter,
-                            counter
+                            counter,
+                            bot
                           ); //Helper function defined below
                         }
                       }
@@ -124,67 +126,3 @@ bot.on("message", (user, userID, channelID, message, evt) => {
     }
   }
 });
-//HELPER FUNCTIONS
-
-//Function to fill an array with JSON data (in this case, word (the words that rhyme with the random generated word))
-//Returns true if new array, false if old
-function fillJsonArray(json, arr) {
-  if (arr.length === 0) {
-    for (let i = 0; i < json.length; i++) {
-      let temp = json[i].word;
-      if (temp.includes(" ") == false) {
-        arr.push(json[i].word);
-      }
-    }
-    return true;
-  }
-  return false;
-}
-
-//Basic helper function for first message bot sends on ^rhyme command
-async function initialMessage(channelID, word, counter, check, maxCounter) {
-  if (check) {
-    bot.sendMessage({
-      to: channelID,
-      message:
-        `:wave: Name 10 words that rhyme with **${word}**! :point_right: Possible words: **` +
-        counter +
-        "**!",
-    });
-  } else {
-    bot.sendMessage({
-      to: channelID,
-      message:
-        `:face_with_monocle: The current word to rhyme with is: **${word}**! *` +
-        maxCounter +
-        ` more!*`,
-    });
-  }
-}
-
-//Basic helper function for follow up message bot sends after a correct word is listened to
-function followUpMessage(channelID, message, word, maxCounter, counter) {
-  bot.sendMessage({
-    to: channelID,
-    message:
-      "☑️ **" +
-      message +
-      `** rhymes with the word **${word}!** *` +
-      maxCounter +
-      " more!* :point_right: Possible words: **" +
-      counter +
-      "**!",
-  });
-}
-
-//Basic helper function for final bot sends when word has been rhymed 10 times
-function finalMessage(channelID, message, word) {
-  bot.sendMessage({
-    to: channelID,
-    message:
-      "☑️ **" +
-      message +
-      `** rhymes with the word **${word}!** ` +
-      `:astonished: You rhymed **${word}** with 10 words! :smile:`,
-  });
-}
