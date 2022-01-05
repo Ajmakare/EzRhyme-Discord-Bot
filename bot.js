@@ -4,6 +4,8 @@ const fetch = require("node-fetch");
 var randomWords = require("random-words");
 require("dotenv").config();
 
+var port = process.env.PORT || 8000;
+
 var rData = [];
 var word = [];
 var check;
@@ -19,7 +21,7 @@ var bot = new Discord.Client({
 bot.setMaxListeners(50)
 
 //Logging to console when bot is online
-bot.on("ready", () => {
+bot.on(port, () => {
   console.log("EzRhyme Bot is online");
 });
 
