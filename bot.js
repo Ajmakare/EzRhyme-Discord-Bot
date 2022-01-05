@@ -89,7 +89,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
                           counter--;
                           maxCounter--;
                           if (maxCounter == 0) {
-                            finalMessage(channelID, word); //Helper function defined below
+                            finalMessage(channelID, message2, word); //Helper function defined below
                             rData = [];
                             flag = true;
                             check = undefined;
@@ -177,9 +177,13 @@ function followUpMessage(channelID, message, word, maxCounter, counter) {
 }
 
 //Basic helper function for final bot sends when word has been rhymed 10 times
-function finalMessage(channelID, word) {
+function finalMessage(channelID, message, word) {
   bot.sendMessage({
     to: channelID,
-    message: `:astonished: You rhymed **${word}** with 10 words! :smile:`,
+    message:
+      "☑️ **" +
+      message +
+      `** rhymes with the word **${word}!** ` +
+      `:astonished: You rhymed **${word}** with 10 words! :smile:`,
   });
 }
