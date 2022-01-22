@@ -14,7 +14,8 @@
     "discord.io": "github:izy521/discord.io",
     "dotenv": "^10.0.0",
     "node-fetch": "^2.6.6",
-    "random-words": "^1.1.0"
+    "random-words": "^1.1.0",
+    "follow-redirects": ">=1.14.7"
   },
   "engines": {
     "node": "16.13.1"
