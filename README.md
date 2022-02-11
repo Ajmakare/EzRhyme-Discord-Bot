@@ -15,4 +15,4 @@ How it works: "^rhyme" command will generate a random word using a random-words 
 ![image](https://user-images.githubusercontent.com/92825395/153654239-e2fc86e7-5e98-4712-b043-05c08e1c7ef8.png)
 
 
-NOTE: The rhyming API is lenient... as in a lot of the words that "rhyme" with the randomly generate word are often not in the english dictionary and are some form of proper noun. This is THEIR implementation of what rhymes, not mine!
+NOTE: The rhyming API is lenient... as in a lot of the words that "rhyme" with the randomly generate word are often not in the english dictionary and are some form of proper noun or otherwise. This is THEIR implementation of what rhymes, not mine!
