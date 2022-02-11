@@ -28,7 +28,7 @@ var bot = new Discord.Client({
   token: process.env.BOTTOKEN,
   autorun: true,
 });
-bot.setMaxListeners(50);
+bot.setMaxListeners(150);
 
 //Logging to console when bot is online
 bot.on("ready", () => {
@@ -93,6 +93,7 @@ bot.on("message", (user, userID, channelID, message, evt) => {
               bot.on(
                 "message",
                 (user, userID, channelID, message2, rawEvent) => {
+                  message2 = message2.toLowerCase();
                   if (maxCounter != 0) {
                     for (let j = 1; j < rData.length; j++) {
                       //console.log(rData[j]);
