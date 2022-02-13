@@ -28,7 +28,7 @@ var bot = new Discord.Client({
   token: process.env.BOTTOKEN,
   autorun: true,
 });
-bot.setMaxListeners(150);
+bot.setMaxListeners(0);
 
 //Logging to console when bot is online
 bot.on("ready", () => {
