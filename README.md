@@ -8,9 +8,11 @@ Currently deployed on Vultr VPS, but coded for only 1 server. I am not planning 
 
 How it works: "^rhyme" command will generate a random word using a random-words module and assign it to a variable. This variable will then be used to access a rhyming API, a database of words that rhyme with said word. With a random-words module and the rhyming API together, they can accomplish the task with lots of JSON reading, array filling & traversing in order to compare words listened to (see bot.js & functions.js (helpers) for code).
  
-![startimageex](https://user-images.githubusercontent.com/92825395/148105873-b37e5c22-92c1-42b2-bb0c-c9ec494ac445.png)
+![image](https://user-images.githubusercontent.com/92825395/153654048-bfec2773-df9e-4ad6-b16a-a4fa00331326.png)
+
+... keeps going until 10 are guessed and: 
+
+![image](https://user-images.githubusercontent.com/92825395/153654239-e2fc86e7-5e98-4712-b043-05c08e1c7ef8.png)
 
 
-...
-
-![finalimageex](https://user-images.githubusercontent.com/92825395/148105738-a2eb2bb4-d522-4ecf-9307-c2df10c71fe0.png)
+NOTE: The rhyming API is lenient... as in a lot of the words that "rhyme" with the randomly generate word are often not in the english dictionary and are some form of proper noun or otherwise. This is THEIR implementation of what rhymes, not mine!
